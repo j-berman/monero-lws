@@ -45,7 +45,7 @@ void lws::decrypt_payment_id(crypto::hash8& out, const crypto::key_derivation& k
     out.data[b] ^= hash.data[b];
 }
 
-boost::optional<std::pair<std::uint64_t, rct::key>> lws::decode_amount(const rct::key& commitment, const rct::ecdhTuple& info, const crypto::key_derivation& sk, std::size_t index, const bool bulletproof2)
+boost::optional<std::pair<std::uint64_t, rct::key>> lws::decode_amount(const rct::key& commitment, const rct::ecdhTuple& info, const crypto::key_derivation& sk, std::size_t index, const bool bulletproof2, const bool bp_plus)
 {
   crypto::secret_key scalar{};
   crypto::derivation_to_scalar(sk, index, scalar);
@@ -53,9 +53,10 @@ boost::optional<std::pair<std::uint64_t, rct::key>> lws::decode_amount(const rct
   rct::ecdhTuple copy{info};
   rct::ecdhDecode(copy, rct::sk2rct(scalar), bulletproof2);
 
+  rct::key C = bp_plus ? rct::scalarmult8(commitment) : commitment;
   rct::key Ctmp;
   rct::addKeys2(Ctmp, copy.mask, copy.amount, rct::H);
-  if (rct::equalKeys(commitment, Ctmp))
+  if (rct::equalKeys(C, Ctmp))
     return {{rct::h2d(copy.amount), copy.mask}};
   return boost::none;
 }

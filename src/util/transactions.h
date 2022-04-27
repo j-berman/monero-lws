@@ -41,5 +41,5 @@ namespace crypto
 namespace lws
 {
   void decrypt_payment_id(crypto::hash8& out, const crypto::key_derivation& key);
-  boost::optional<std::pair<std::uint64_t, rct::key>> decode_amount(const rct::key& commitment, const rct::ecdhTuple& info, const crypto::key_derivation& sk, std::size_t index, const bool bulletproof2);
+  boost::optional<std::pair<std::uint64_t, rct::key>> decode_amount(const rct::key& commitment, const rct::ecdhTuple& info, const crypto::key_derivation& sk, std::size_t index, const bool bulletproof2, const bool bp_plus);
 }
